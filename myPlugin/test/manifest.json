@@ -1,0 +1,11 @@
+{
+    "name": "demo",
+    "manifest_version":2,
+    "version": "1.0.0",
+    "description": "a little demo",
+    "browser_action":
+    {
+        "default_popup": "demo1.html"
+    }
+  }
+  
