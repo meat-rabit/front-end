@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>CSS 绑定写法</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    .active {
+        width: 100px;
+        height: 100px;
+        background-color: azure;
+        color: red;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <!-- 静态的class -->
+    <div class="red">Hello</div>
+    <!-- 动态的class -->
+    <div :class="className">Hello</div>
+    <!-- 根据条件决定加不加class:可以设定函数来改变isActive和isHidden的值，然后active或者hidden绑定不同的样式 -->
+    <div :class="{ active: isActive, hidden: isHidden }">Hello</div>
+
+  </div>
+
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    createApp({
+      setup() {           
+        const className = ref('blue')
+        const isActive = ref(true)
+        const isHidden = ref(false)
+        return {className, isActive, isHidden }
+
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>

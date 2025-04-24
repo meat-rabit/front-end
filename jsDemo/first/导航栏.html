@@ -1,3 +1,8 @@
+<!-- 功能:
+ 1.v-for 显示所有的技术栈和技术栈下面的信息
+ 2.v-show 根据条件判断是否显示出具体的信息
+ 3.鼠标悬停和鼠标移出的事件(通过这个改变v-show的值) 
+ -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -8,42 +13,31 @@
     *{margin:0;padding:0;}
     body{font-size:14px;}
     ul{list-style:none;}
-    #container{width:1000px;margin:150px auto;}
+    #container{width:1000px;margin:50px auto;}
     #header{border-bottom:3px solid #F60;height:30px;}
     #header li{font-weight:bolder;float:left;height:30px;width:80px;text-align:center;line-height:30px; cursor: pointer;}
-    #header .sec{background:#f60;color:#fff;}
+    #header .sec{background:rgb(247, 247, 247);color:#aaf0aa;}
     #listContent li{font-size:16px;line-height:30px;height:30px;}
-    #tips{padding: 5px; position: absolute;left:0;top:0;width: 400px;border: 2px solid #FF7700; background-color: white;display:none;}
+    #tips{padding: 5px; position: absolute;left:0;top:0;width: 400px;border: 2px solid #FF7700; background-color: white；}
     #tips li{list-style:none;font-size:16px;height:30px;line-height:30px;}
     #tips li.col{width:180px;height: 30px; float: left;line-height: 30px; border-bottom: 1px solid #CCC;}
   </style>
 </head>
 <body>
-  <div id="app">
+  <div id="app"> 
     <div id="container">
       <ul id="header">
         <li v-for="(item, index) in data" :key="index" 
-        :class="{ sec: currentIndex === index }" 
+        :class="{ sec: currentIndex === index }" // 动态改变class状态
         @click="switchTab(index)">
         {{item.name}}
     </li>
       </ul>
 
       <div id="listContent">
-        <ul v-for="(job,i) in currentList" :key="i" >
-            <li>{{job.title}}</li>
+        <ul  v-for="(job,i) in currentList" :key="i" >
+            <li > <a  href="javascript:" @mouseover="showTips($event, job)"  @mouseout="hideTips">{{job.title}}</a></li>
         </ul>
-        <!-- <ul v-for="(job, index) in currentList" :key="index">
-          <li>
-            <a
-              href="javascript:"
-              @mouseover="showTips($event, job)"
-              @mouseout="hideTips"
-            >
-              {{ job.title }}
-            </a>
-          </li>
-        </ul> -->
       </div>
     </div>
 
@@ -54,10 +48,10 @@
     >
       <div id="tipsContent">
         <h4>{{ tipData.company }}</h4>
+        <li class="col">{{ tipData.company }}</li>
+        <li class="col">{{ tipData.position }}</li>
         <li class="col">{{ tipData.recruitingNumbers }}</li>
         <li class="col">{{ tipData.workingLocation }}</li>
-        <li class="col">{{ tipData.workExperience }}</li>
-        <li class="col">{{ tipData.education }}</li>
         <li class="col">{{ tipData.wage }}</li>
         <li class="col">{{ tipData.addDate }}</li>
       </div>
@@ -65,268 +59,299 @@
   </div>
 
   <script>
+
     const { createApp, ref, reactive, onMounted } = Vue
 
     //数据
-    const  data = [
-	{
-		'name'	:	'前端',
-		'list'	:	[
-			{
-				'title'	:	'前端工程师',
-				'company'	:	'北京xxxx有限公司',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'北京',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'网站前端页面设计',
-				'company'	:	'上海xxxx有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'5人',
-				'workingLocation'	:	'上海',
-				'workExperience'	:	'不限',
-				'education'	:	'大专',
-				'wage'	:	'7000',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'高级web前端工程师',
-				'company'	:	'广州xxxx公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'12人',
-				'workingLocation'	:	'广州',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'HTML5前端工程师',
-				'company'	:	'杭州xxxx有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'朝阳',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'前端工程师',
-				'company'	:	'北京xxxx科技有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'北京',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'网站前端设计',
-				'company'	:	'上海xxxx有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'上海',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'诚招web前端开发工程师',
-				'company'	:	'北京xxxx文化发展中心 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'北京',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'web前端DIV+CSS',
-				'company'	:	'深圳xxxx科技有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'深圳',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'前端设计',
-				'company'	:	'上海xxxx科技有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'3人',
-				'workingLocation'	:	'上海',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'招聘 前端页面工作者',
-				'company'	:	'深圳xxxx教育科技有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'深圳',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'页面前端工程师',
-				'company'	:	'杭州xxxx管理有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'4人',
-				'workingLocation'	:	'杭州',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'高级web前端工程师',
-				'company'	:	'南京xxxx公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'12人',
-				'workingLocation'	:	'南京',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'HTML5前端工程师',
-				'company'	:	'北京xxxx科技有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'北京',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'前端工程师',
-				'company'	:	'深圳xxxx科技有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'深圳',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'网站前端设计',
-				'company'	:	'北京xxxx有限公司 ',
-				'position'	:	'前端页面',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'北京',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			}
-		]
-	},
-	
-	{
-		'name'	:	'后端',
-		'list'	:	[
-			{
-				'title'	:	'PHP工程师',
-				'company'	:	'杭州xxxx有限公司 ',
-				'position'	:	'PHP后台',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'杭州',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'诚招java开发工程师',
-				'company'	:	'广州xxxx中心 ',
-				'position'	:	'java开发',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'广州',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'java工程师',
-				'company'	:	'深圳xxxx科技有限公司 ',
-				'position'	:	'java后台',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'深圳',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'.net工程师',
-				'company'	:	'北京xxxx网络科技有限公司 ',
-				'position'	:	'.net程序员',
-				'recruitingNumbers'	:	'3人',
-				'workingLocation'	:	'通州',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'招聘php程序员',
-				'company'	:	'xxxx教育科技有限公司 ',
-				'position'	:	'php程序员',
-				'recruitingNumbers'	:	'2人',
-				'workingLocation'	:	'北京',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			},
-			{
-				'title'	:	'PHP高级工程师',
-				'company'	:	'北京xxxx管理有限公司 ',
-				'position'	:	'PHP高级工程师',
-				'recruitingNumbers'	:	'4人',
-				'workingLocation'	:	'北京',
-				'workExperience'	:	'不限',
-				'education'	:	'不限',
-				'wage'	:	'面议',
-				'addDate'	:	'2017-5-14'
-			}
-		]
-	}
-];
-
+    const data = [
+        {
+            'name': '首页',
+            'list': []
+        },
+        {
+            'name': 'HTML',
+            'list': [
+                {
+                    'title': 'HTML基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-01'
+                },
+                {
+                    'title': 'HTML高级技巧',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-01'
+                }
+            ]
+        },
+        {
+            'name': 'CSS',
+            'list': [
+                {
+                    'title': 'CSS基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-02'
+                },
+                {
+                    'title': 'CSS布局技巧',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-02'
+                }
+            ]
+        },
+        {
+            'name': 'JAVASCRIPT',
+            'list': [
+                {
+                    'title': 'JavaScript入门',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-03'
+                },
+                {
+                    'title': 'JavaScript高级应用',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-03'
+                }
+            ]
+        },
+        {
+            'name': 'VUE',
+            'list': [
+                {
+                    'title': 'Vue.js基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-04'
+                },
+                {
+                    'title': 'Vue.js项目实战',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-04'
+                }
+            ]
+        },
+        {
+            'name': 'REACT',
+            'list': [
+                {
+                    'title': 'React.js基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-05'
+                },
+                {
+                    'title': 'React.js高级应用',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-05'
+                }
+            ]
+        },
+        {
+            'name': 'PYTHON3',
+            'list': [
+                {
+                    'title': 'Python3基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-06'
+                },
+                {
+                    'title': 'Python3项目实战',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-06'
+                }
+            ]
+        },
+        {
+            'name': 'JAVA',
+            'list': [
+                {
+                    'title': 'Java基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-07'
+                },
+                {
+                    'title': 'Java高级应用',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-07'
+                }
+            ]
+        },
+        {
+            'name': 'C',
+            'list': [
+                {
+                    'title': 'C语言基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-08'
+                },
+                {
+                    'title': 'C语言高级应用',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-08'
+                }
+            ]
+        },
+        {
+            'name': 'C++',
+            'list': [
+                {
+                    'title': 'C++基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-09'
+                },
+                {
+                    'title': 'C++高级应用',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-09'
+                }
+            ]
+        },
+        {
+            'name': 'C#',
+            'list': [
+                {
+                    'title': 'C#基础教程',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-01-10'
+                },
+                {
+                    'title': 'C#高级应用',
+                    'company': 'Moonshot AI',
+                    'position': '学习资源',
+                    'recruitingNumbers': '不限',
+                    'workingLocation': '在线',
+                    'workExperience': '不限',
+                    'education': '不限',
+                    'wage': '免费',
+                    'addDate': '2024-02-10'
+                }
+            ]
+        }
+    ];
+  
     createApp({
       setup() {
         const currentIndex = ref(0)
-        const currentList = ref(data[0].list)
-        console.log(currentList.value);
-        
+        const currentList = ref(data[0].list)        
         const showTooltip = ref(false)
         const tooltipPos = reactive({ left: 0, top: 0 })
         const tipData = reactive({
           company: '',
+          position: '',
           recruitingNumbers: '',
           workingLocation: '',
           workExperience: '',
-          education: '',
           wage: '',
           addDate: ''
         })
@@ -348,11 +373,6 @@
           showTooltip.value = false
         }
 
-        // 可选：连接 WebSocket
-        const socket = new WebSocket('ws://localhost:3000')
-        socket.onmessage = (event) => {
-          console.log('收到消息：', event.data)
-        }
 
         return {
           data,
