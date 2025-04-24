@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue 单页模板</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 40px auto;
+      max-width: 800px;
+      line-height: 1.6;
+    }
+    h1 {
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>Vue + WebSocket 模板</h1>
+    
+    <!-- 示例响应式绑定 -->
+    <p v-if="message">收到消息：{{ message }}</p>
+    <input v-model="input" placeholder="发送消息..." />
+    <button @click="sendMessage">发送</button>
+
+    <!-- 你可以在这里添加 v-for、v-if、列表等结构 -->
+  </div>
+
+  <script>
+    const { createApp, ref, reactive } = Vue;
+
+    createApp({
+      setup() {
+        const input = ref('');
+        const message = ref('');
+        
+        // 连接你的 WebSocket 服务器
+        const socket = new WebSocket('ws://localhost:3000');
+
+        socket.onmessage = (event) => {
+          message.value = event.data;
+        };
+
+        const sendMessage = () => {
+          if (socket.readyState === WebSocket.OPEN) {
+            socket.send(input.value);
+            input.value = '';
+          } else {
+            alert('WebSocket 未连接');
+          }
+        };
+
+        return {
+          input,
+          message,
+          sendMessage
+        };
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
