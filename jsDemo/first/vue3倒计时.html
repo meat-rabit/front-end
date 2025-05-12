@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>Vue 倒计时</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #app {
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 68px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      font-size: 16px;
+      background-color: #fff;
+      color: #000;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:disabled {
+      background-color: #888;
+      cursor: not-allowed;
+    }
+
+    button:hover:not(:disabled) {
+      background-color: #ddd;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h2>{{ formattedTime }}</h2>
+    <button @click="startCountdown" :disabled="isRunning">开始</button>
+    <button @click="pauseCountdown" :disabled="!isRunning">暂停</button>
+    <button @click="resetCountdown">重置</button>
+  </div>
+
+  <script>
+    const { createApp, ref, computed, onUnmounted } = Vue
+
+    createApp({
+      setup() {
+        const totalSeconds = ref(60)
+        const remainingSeconds = ref(totalSeconds.value)
+        const isRunning = ref(false)
+        let timer = null
+
+        const formattedTime = computed(() => {
+          const mins = String(Math.floor(remainingSeconds.value / 60)).padStart(2, '0')
+          const secs = String(remainingSeconds.value % 60).padStart(2, '0')
+          return `${mins}:${secs}`
+        })
+
+        function startCountdown() {
+          if (isRunning.value || remainingSeconds.value <= 0) return
+          isRunning.value = true
+          timer = setInterval(() => {
+            if (remainingSeconds.value > 0) {
+              remainingSeconds.value--
+            } else {
+              pauseCountdown()
+            }
+          }, 1000)
+        }
+
+        function pauseCountdown() {
+          isRunning.value = false
+          clearInterval(timer)
+        }
+
+        function resetCountdown() {
+          pauseCountdown()
+          remainingSeconds.value = totalSeconds.value
+        }
+
+        onUnmounted(() => {
+          clearInterval(timer)
+        })
+
+        return {
+          formattedTime,
+          startCountdown,
+          pauseCountdown,
+          resetCountdown,
+          isRunning
+        }
+      }
+    }).mount('#app')
+  </script>
+</body>
+</html>
